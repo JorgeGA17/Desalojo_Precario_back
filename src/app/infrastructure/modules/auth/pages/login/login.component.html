@@ -1,0 +1,73 @@
+<section class="page-wrapper">
+  <section class="login-hero">
+    <!-- Columna izquierda: título + texto -->
+    <div class="hero-left">
+      <h1 class="hero-title">Sicdpre</h1>
+      <h1 class="hero-subtitle">Sistema de Calificación Automatizada de Demandas por Ocupante Precario</h1>
+      <p class="hero-text">
+        Este sistema emplea inteligencia artificial para agilizar la calificación de demandas civiles 
+        por ocupante precario. En menos de dos minutos, el sistema genera automáticamente el auto 
+        correspondiente de admisibilidad, inadmisibilidad o improcedencia, contribuyendo a la celeridad 
+        procesal, optimización de recursos y mejora en la percepción del servicio judicial.
+      </p>
+    </div>
+
+    <!-- Columna derecha: tu login (sin tocar la lógica) -->
+    <section class="login">
+      <!-- Logo institucional -->
+      <div class="login-logo">
+        <img src="assets/img/logo-pj.png" alt="Poder Judicial" />
+      </div>
+      <!--<h2 class="login-title">Acceso</h2>-->
+
+      <form (ngSubmit)="submit()" #frm="ngForm" novalidate class="p-fluid">
+
+        <!-- Corte Superior -->
+        <div class="field">
+          <label for="profile">Corte Superior</label>
+          <p-dropdown id="profile" name="profile"
+                      [options]="profiles" optionLabel="label" optionValue="id"
+                      [(ngModel)]="selectedProfile"
+                      placeholder="Seleccione" required>
+          </p-dropdown>
+        </div>
+
+        <!-- Usuario -->
+        <div class="field">
+          <label for="user">Usuario</label>
+          <input pInputText id="user" name="user" [(ngModel)]="user" required />
+        </div>
+
+        <!-- Contraseña -->
+        <div class="field">
+          <label for="pwd">Contraseña</label>
+          <p-password id="pwd" name="pwd"
+                      [(ngModel)]="pwd"
+                      [feedback]="false" toggleMask
+                      required>
+          </p-password>
+        </div>
+
+        <!-- Botón ingresar -->
+        <div class="actions">
+          <button pButton
+                  type="submit"
+                  label="Ingresar"
+                  class="p-button-secondary"
+                  [disabled]="loading">
+          </button>
+        </div>
+
+        <!-- Mensaje de error -->
+        <p-message *ngIf="error" severity="danger" [text]="error"></p-message>
+
+        <!-- Enlace recuperar contraseña -->
+        <div class="links">
+          <a (click)="goForgot()" role="button" tabindex="0">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+      </form>
+    </section>
+  </section>
+</section>

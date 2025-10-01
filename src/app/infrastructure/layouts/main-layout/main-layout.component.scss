@@ -1,0 +1,251 @@
+/* =======================================================================================
+   MAIN-LAYOUT (UI)
+   Todo lo que cuelga del layout hereda estos tokens (no afecta al login).
+   ======================================================================================= */
+
+/* 1) TOKENS DEL LAYOUT (paleta/tipografía locales al layout) */
+:host {
+  --pj-rojo:     #97080B;
+  --pj-rojo-osc: #5a0a0a;
+  --pj-azul:     #003a70;   /* si quieres extender el degradado hasta azul */
+  --pj-text:     #F4FFFF;
+
+  --neutral-50:   #f9fafb;
+  --neutral-100:  #f3f4f6;
+  --neutral-900:  #111827;
+
+  --fs-menu:   1.00rem;     /* ítems del menú */
+  --fs-search: 1.00rem;     /* input de búsqueda */
+  --fs-name:   1.00rem;     /* nombre de usuario */
+  --fs-role:   0.80rem;     /* rol de usuario */
+  --topbar-h: 50px;       /* 👈 alto fijo del topbar (ajústalo si quieres) */
+}
+
+/* =======================================================================================
+   2) GRID PRINCIPAL: sidebar + contenido
+   ======================================================================================= */
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;         /* columna izquierda fija + contenido flexible */
+  min-height: calc(98.5vh - 48px);           /* ocupa todo el alto menos el topbar */
+}
+
+/* Columna derecha (área donde renderiza <router-outlet>) */
+.content {
+  padding: 1rem 1.25rem;
+  background: #F0F0F2;                      /* puedes usar var(--neutral-50) si prefieres */
+}
+
+/* =======================================================================================
+   3) TOPBAR (usa tokens)
+   ======================================================================================= */
+.topbar {
+  height: var(--topbar-h);        /* 👈 alto consistente */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(
+    135deg,
+    var(--pj-rojo) 0%,
+    var(--pj-rojo-osc) 35%
+    /* si deseas el mismo degradado del login, agrega: , var(--pj-azul) 100% */
+  );
+  color: var(--pj-text);
+  padding: .55rem .9rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1);
+
+  .brand { font-size: 1rem; }
+
+  .btn {
+    background: #fff;
+    color: var(--neutral-900);
+    border: 1px solid #e5e7eb;              /* podrías usar var(--neutral-100) */
+    padding: .35rem .7rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &.danger { border-color: #fecaca; background: #fff7f7; }
+  }
+}
+
+/* =======================================================================================
+   4) SIDEBAR DEGRADADO (usa tokens)
+   - AHORA organizado como columna: el footer se fija abajo y el scroll vive en .side-content
+   ======================================================================================= */
+.sidebar {
+  background: linear-gradient(
+    135deg,
+    var(--pj-rojo) 0%,
+    var(--pj-rojo-osc) 35%
+    /* para igualar al login, agrega: , var(--pj-azul) 100% */
+  );
+  color: var(--pj-text);
+  padding: 12px;
+
+  /* 🔹 clave: columna para poder empujar el footer al fondo */
+  display: flex;
+  flex-direction: column;
+
+  /* 🔹 aquí vive el SCROLL del menú (no en .sidebar) */
+  .side-content {
+    flex: 1 1 auto;          /* ocupa todo el espacio disponible entre top y footer */
+    overflow: auto;          /* si el contenido es largo, scrollea aquí */
+    padding-bottom: 8px;     /* aire para que el último ítem no choque con el footer */
+  }
+
+  /* ---- Encabezado usuario ----------------------------------------------------------- */
+  .side-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 6px 14px;
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.08);
+      overflow: hidden;        /* recorta la imagen en círculo */
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;     /* centra y recorta sin deformar */
+      }
+    }
+    .user {
+      .name { font-weight: 600; line-height: 1; font-size: var(--fs-name); }
+      .role { font-size: var(--fs-role); opacity: .85; }
+    }
+  }
+
+  /* ---- Búsqueda -------------------------------------------------------------------- */
+  .search {
+    position: relative; margin: 8px 4px 14px;
+
+    i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .85; }
+
+    input {
+      width: 100%; height: 36px; padding: 0 12px 0 32px; /* deja espacio al ícono */
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.12);
+      color: var(--pj-text);
+      font-size: var(--fs-search);
+      &::placeholder { color: rgba(255,255,255,.75); }
+      &:focus { outline: 2px solid rgba(255,255,255,.6); }
+    }
+  }
+
+  /* ---- Menú + submenús ------------------------------------------------------------- */
+  .menu { display: grid; gap: 6px; }
+
+  .item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; margin: 2px 0;
+    text-decoration: none;
+    color: var(--pj-text);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.08);
+    cursor: pointer;
+    font-size: var(--fs-menu);
+
+    &:hover  { background: rgba(255,255,255,.14); }
+    &.active { background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.38); }
+  }
+
+  .icon   { width: 1.1rem; text-align: center; font-size: 1.05rem; }
+  .spacer { flex: 1 1 auto; }
+
+  .parent {
+    width: 100%;
+    .caret { margin-left: 8px; transition: transform .2s; }
+    .caret.up { transform: rotate(180deg); }
+  }
+
+  .children {
+    display: grid; gap: 4px; padding-left: 8px; margin-top: 6px;
+    max-height: 0; overflow: hidden; transition: max-height .2s ease;
+    &.open { max-height: 500px; }
+  }
+
+  .child { background: rgba(255,255,255,.10); }
+
+  .badge {
+    font-size: .72rem; padding: 2px 8px; border-radius: 9999px;
+    background: rgba(255,255,255,.25); color: #fff; border: 1px solid rgba(255,255,255,.35);
+    &.isNew { background: #22c55e; border-color: #16a34a; }
+  }
+
+  /* ---- Footer fijo con logo -------------------------------------------------------- */
+  .side-footer {
+    margin-top: auto;                        /* empuja el footer al fondo del sidebar */
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: .95;
+
+    /* safe area iOS (notch) */
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+
+    img {
+      max-width: 140px;                      /* ajusta al tamaño de tu logo */
+      width: 80%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.25)); /* sutil realce sobre el degradado */
+      user-select: none;
+      pointer-events: none;
+    }
+    .foot-note { font-size: .75rem; color: var(--pj-text); opacity: .85; }
+  }
+}
+
+/* =======================================================================================
+   5) Títulos del contenido (heredados por páginas hijas)
+   ======================================================================================= */
+.content h1 {
+  font-size: clamp(1.1rem, 2.1vw, 1.6rem);
+  line-height: 1.25;
+  margin: 0 0 .5rem 0;
+}
+
+/* =======================================================================================
+   6) Accesibilidad (focus visible dentro del layout)
+   ======================================================================================= */
+:host a:focus,
+:host button:focus {
+  outline: 3px solid rgba(255,255,255,.7);
+  outline-offset: 2px;
+}
+
+/* =======================================================================================
+   7) Responsive: apila en móvil
+   ======================================================================================= */
+@media (max-width: 900px) {
+  .shell   { grid-template-columns: 1fr; }  /* sidebar arriba, contenido abajo */
+  .content { padding-top: .75rem; }
+}
+
+/* 🔹 Clase personalizada para botón cuadrado */
+:host ::ng-deep .p-button.square-btn.p-button-sm  {
+  width: 28px;   /* ancho fijo */
+  height: 28px;  /* alto fijo → cuadrado */
+  padding: 0;  /* evita espacio interno extra */
+  border-radius: 6px; /* 👈 esquinas ligeramente redondeadas, NO círculo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔹 Contenedor de botones (flex en fila) */
+.profile-actions {
+  display: flex;
+  gap: 1px;   /* separa los botones entre sí */
+  margin-top: 4px; /* opcional, espacio respecto al nombre de usuario */
+}

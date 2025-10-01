@@ -1,0 +1,179 @@
+/* ===============================
+   HERO: Layout y fondo institucional
+   - Mantiene SPA y PrimeNG; solo estilos locales del componente
+   =============================== */
+/* Padre: centra el hero y añade aire arriba/abajo */
+.page-wrapper {
+  min-height: 80dvh;                  /* ocupa la pantalla */
+  display: flex;
+  align-items: center;                 /* centra vertical */
+  justify-content: center;             /* centra horizontal */
+  padding-block: clamp(24px, 6vh, 80px); /* aire arriba/abajo */
+  padding-inline: clamp(16px, 3vw, 32px);
+  /* ⬇️ safe-areas para iOS */
+  padding-top: max(env(safe-area-inset-top), clamp(24px, 6vh, 80px));
+  padding-bottom: max(env(safe-area-inset-bottom), 24px);
+}
+
+
+/* Hijo: tu hero, con ancho/alto controlados */
+.login-hero {
+  display: grid;
+  grid-template-columns: minmax(520px, 1fr) minmax(440px, 520px);
+  gap: 5.9rem; /* 🔧 Menos espacio entre columnas */
+  align-items: center;
+
+  max-width: 1090px;                   /* evita que se pegue a los lados */
+  width: 100%;
+  min-height: 51dvh;                   /* deja aire vertical dentro */
+  border-radius: 16px;
+  margin-inline: auto;
+
+  /* tus paddings responsivos (puedes mantenerlos) */
+  padding-inline: clamp(0.5rem, 2vw, 1.8rem);
+  padding-block: clamp(1rem, 2vw, 2rem);
+  background: linear-gradient(135deg, #97080B 0%, #5a0f0f 35%, #003a70 100%);
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 25% 20%, rgba(255,255,255,.06), transparent 45%);
+    z-index: -1;
+    border-radius: inherit;
+  }
+}
+
+/* ✅ evita desbordes del grid cuando el contenido es ancho */
+.hero-left, .login { min-width: 0; }
+
+/* ===============================
+   Columna izquierda: título + texto
+   =============================== */
+.hero-left {
+  color: #ffffff;
+  max-width: 640px;            /* 🔧 Ajuste: mejor legibilidad en líneas largas */
+  margin-inline: auto;
+  padding: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.hero-title {
+  font-family: 'Poppins', "Segoe UI", Arial, sans-serif;
+  font-weight: 700;     
+  /* ⬇️ antes: 80px -> responsive */
+  font-size: clamp(28px, 6vw, 64px);
+  line-height: 1.2;     /* ajusta separación */
+  margin: 0 0 0.5rem 0;
+  color: #F4FFFF;   
+  letter-spacing: 5px;       /* 🔧 Sutil mejora de lectura para tipografías institucionales */
+  user-select: none;
+}
+
+.hero-subtitle {
+  font-family: 'Poppins', "Segoe UI", Arial, sans-serif;
+  font-weight: 600;     
+  /* ⬇️ antes: 25px -> responsive */
+  font-size: clamp(16px, 2.8vw, 22px);
+  line-height: 1.2;     /* ajusta separación */
+  margin: 0 0 1.8rem 0;
+  color: #F4FFFF;   
+  letter-spacing: 0.2px;       /* 🔧 Sutil mejora de lectura para tipografías institucionales */
+  user-select: none;
+}
+
+.hero-text {
+  font-family: 'Poppins', "Segoe UI", Arial, sans-serif;
+  font-weight: 300;     
+  /* ⬇️ antes: 12px -> un poco mayor y responsive */
+  font-size: clamp(10px, 2.1vw, 12px);
+  line-height: 1.6;     /* ajusta separación */
+  opacity: 0.9;                /* 🔧 Un poco más de contraste */
+  margin: 0;
+  color: #F4FFFF;                           /* 🔧 gris claro sobre el fondo */
+  max-width: 500px;                         /* controla el ancho del párrafo */
+  word-break: break-word;     /* ⬅️ evita overflow con textos largos */
+  user-select: none;
+}
+
+/* ===============================
+   Tarjeta del login (form PrimeNG)
+   =============================== */
+.login {
+  width: 100%;
+  max-width: 360px;
+  margin-inline: auto;
+  padding: 2rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.field { margin-bottom: 1rem; }
+.actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-start;
+}
+.links { margin-top: 0.75rem; text-align: right; }
+/* PrimeNG: botón con forma “pill” (no pisa estilos globales) */
+:host ::ng-deep .p-button { border-radius: 9999px; }
+
+/* Contenedor del logo */
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;   /* espacio debajo del logo */
+  user-select: none;
+
+  img {
+    max-width: 120px;   /* tamaño recomendado */
+    height: auto;
+  }
+}
+
+/* Ajuste del título "Acceso" */
+.login-title {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 1.5rem; /* separa del formulario */
+}
+
+/* ===============================
+   Responsive: apila en una columna en móviles
+   =============================== */
+@media (max-width: 992px) {
+  .login-hero {
+    grid-template-columns: 1fr;    /* ✅ apila */
+    padding-inline: 1.25rem;
+    padding-block: 1.25rem;
+    min-height: auto;              /* ✅ que respire, sin forzar altura */
+  }
+  .hero-left { text-align: center; margin-bottom: .5rem; }
+  .login     { max-width: 540px; padding: 1.25rem; }
+  .login-logo img { max-width: 96px; }
+}
+
+
+/* ===============================
+   ✅ NUEVO: móviles chicos → oculta el bloque de texto y deja solo el login
+   =============================== */
+@media (max-width: 576px) {
+  .hero-left { display: none; }          /* 👈 Oculta el texto */
+  .login-hero {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    min-height: auto;                    /* sin forzar alto */
+    justify-items: center;               /* centra el login en el grid */
+  }
+  .login {
+    max-width: 100%;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .login-logo img { max-width: 86px; }
+}
+

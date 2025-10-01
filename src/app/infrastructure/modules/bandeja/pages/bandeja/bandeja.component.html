@@ -1,0 +1,101 @@
+<p-card>
+  <ng-template pTemplate="title">Bandeja de documentos</ng-template>
+  <ng-template pTemplate="subtitle">Lista de documentos procesados</ng-template>
+
+  <!-- 🔎 Filtros UI -->
+  <div class="grid align-items-center mb-3">
+    <div class="col-12 md:col-4">
+      <span class="p-input-icon-left w-full">
+        <i class="pi pi-search"></i>
+        <input pInputText
+               [ngModel]="search()"
+               (ngModelChange)="search.set($event)"
+               (keyup.enter)="page.set(0); cargar()"
+               placeholder="Buscar por usuario, instancia…"
+               class="w-full" />
+      </span>
+    </div>
+
+    <div class="col-6 md:col-3">
+      <p-dropdown
+        [options]="estados"
+        [ngModel]="estado()"
+        (ngModelChange)="estado.set($event); page.set(0); cargar()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Estado">
+      </p-dropdown>
+    </div>
+
+    <div class="col-6 md:col-2">
+      <button pButton label="Buscar" icon="pi pi-search"
+              class="p-button-secondary"
+              (click)="page.set(0); cargar()"></button>
+    </div>
+  </div>
+
+  <!-- ⚠️ Errores -->
+  <p-message *ngIf="error()" severity="danger" [text]="error()!"></p-message>
+
+  <!-- 🧭 Tabla con nuevo ORDEN -->
+  <p-table
+    styleClass="bandeja-table"
+    [value]="items()"
+    [paginator]="true"
+    [rows]="size()"
+    [totalRecords]="total()"
+    (onPage)="onPage($event)"
+    [lazy]="true"
+    [loading]="loading()"
+    responsiveLayout="scroll"
+    [tableStyle]="{'min-width':'1200px'}"
+    [rowHover]="true" 
+    [rowsPerPageOptions]="[5, 10, 15, 20]"
+    [showCurrentPageReport]="true"
+    >                                
+
+    <!-- Encabezado -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 12rem">Usuario</th>                 <!-- 1 -->
+        <th style="width: 12rem">Fecha registro</th>          <!-- 2 -->
+        <th style="width: 14rem">Corte</th>                   <!-- 3 -->
+        <th style="width: 12rem">Sede</th>                    <!-- 4 -->
+        <th style="width: 12rem">Instancia</th>               <!-- 5 -->
+        <th style="width: 16rem">N° Expediente</th>           <!-- 6 -->
+        <th style="width: 12rem">Juez</th>                    <!-- 7 -->
+        <th style="width: 12rem">Especialista</th>            <!-- 8 -->
+        <th style="width: 10rem">Estado</th>                  <!-- 9 -->
+        <th style="width: 12rem" class="text-right">Acciones</th> <!-- 10 -->
+      </tr>
+    </ng-template>
+
+    <!-- Cuerpo -->
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.usuario }}</td>                              <!-- 1 -->
+        <td>{{ row.fechaRegistro | date:'short' }}</td>         <!-- 2 -->
+        <td>{{ row.corte }}</td>                                <!-- 3 -->
+        <td>{{ row.sede }}</td>                                 <!-- 4 -->
+        <td>{{ row.instancia }}</td>                            <!-- 5 -->
+        <td>{{ row.numeroExpediente }}</td>                     <!-- 6 -->
+        <td>{{ row.juez }}</td>                                 <!-- 7 -->
+        <td>{{ row.especialista }}</td>                         <!-- 8 -->
+        <td>                                                    <!-- 9 -->
+          <p-tag [value]="row.estado" [severity]="colorEstado(row.estado)"></p-tag>
+        </td>
+        <td class="text-right">                                 <!-- 10 -->
+          <button pButton icon="pi pi-eye" class="p-button-text"
+                  aria-label="Ver documento"
+                  (click)="ver(row)" [disabled]="row.estado !== 'GENERADO' || !row.url"></button>
+          <button pButton icon="pi pi-download" class="p-button-text"
+                  aria-label="Descargar documento"
+                  (click)="descargar(row)" [disabled]="row.estado !== 'GENERADO' || !row.url"></button>
+          <button pButton icon="pi pi-refresh" class="p-button-text"
+                  aria-label="Reintentar proceso"
+                  (click)="reintentar(row)" [disabled]="row.estado !== 'ERROR' || !row.id"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

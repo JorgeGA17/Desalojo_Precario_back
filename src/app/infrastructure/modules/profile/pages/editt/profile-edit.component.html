@@ -1,0 +1,94 @@
+<!-- =========================================
+     ADAPTADOR PRIMARIO (UI)
+     - Formulario reactivo para editar perfil
+     - Usa PrimeNG + Skeleton de carga
+     ========================================= -->
+<p-toast position="top-right"></p-toast>
+
+<div class="page">
+  <p-card header="Editar Perfil" styleClass="mb-3">
+
+    <!-- ⏳ Estado cargando -->
+    <ng-container *ngIf="loading(); else loadedTpl">
+      <div class="skeletons">
+        <p-skeleton height="2rem"></p-skeleton>
+        <p-skeleton height="2rem"></p-skeleton>
+        <p-skeleton height="2rem"></p-skeleton>
+        <p-skeleton height="2rem"></p-skeleton>
+      </div>
+    </ng-container>
+
+    <!-- ✅ Contenido cargado -->
+    <ng-template #loadedTpl>
+      <!-- 🚨 Error al cargar -->
+      <div *ngIf="loadError()" class="p-error mb-2" role="alert">
+        {{ loadError() }}
+      </div>
+
+      <!-- 🧾 Formulario -->
+      <form
+        *ngIf="!loadError()"
+        [formGroup]="form"
+        (ngSubmit)="onSaveProfile()"
+        class="form-grid"
+        novalidate>
+
+        <!-- Usuario (solo lectura) -->
+        <label for="username">Usuario</label>
+        <input pInputText id="username" formControlName="username" readonly>
+
+        <!-- Nombre(s) -->
+        <label for="firstName">Nombre(s)</label>
+        <div class="ctrl">
+          <input
+            pInputText
+            id="firstName"
+            formControlName="firstName"
+            [ngClass]="{ 'p-invalid': showError('firstName') }" />
+          <small class="help p-error" *ngIf="showError('firstName')">Ingrese nombre(s)</small>
+        </div>
+
+        <!-- Apellidos -->
+        <label for="lastName">Apellidos</label>
+        <div class="ctrl">
+          <input
+            pInputText
+            id="lastName"
+            formControlName="lastName"
+            [ngClass]="{ 'p-invalid': showError('lastName') }" />
+          <small class="help p-error" *ngIf="showError('lastName')">Ingrese apellidos</small>
+        </div>
+
+        <!-- Email -->
+        <label for="email">Email</label>
+        <div class="ctrl">
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            [ngClass]="{ 'p-invalid': showError('email') }" />
+          <small class="help p-error" *ngIf="showError('email')">Email inválido</small>
+        </div>
+
+        <!-- Acciones -->
+        <div class="actions">
+          <p-button
+            type="submit"
+            label="Guardar"
+            icon="pi pi-save"
+            [disabled]="saveDisabled()">
+          </p-button>
+
+          <p-button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            (onClick)="onCancel()">
+          </p-button>
+        </div>
+      </form>
+    </ng-template>
+  </p-card>
+</div>

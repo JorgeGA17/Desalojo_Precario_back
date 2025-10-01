@@ -1,0 +1,138 @@
+<!-- ========================================= -->
+<!--               TOPBAR SUPERIOR             -->
+<!-- ========================================= -->
+<header class="topbar" role="banner">
+  <div class="brand">
+    <strong>Sistema: Módulo CIVIL - Desalojo Precario</strong>
+  </div>
+  <div class="actions">
+    <button class="btn danger" (click)="logout()" title="Salir">Salir ✦</button>
+  </div>
+</header>
+<!-- ========================================= -->
+<!--            GRID: SIDEBAR + CONTENIDO      -->
+<!-- ========================================= -->
+<div class="shell">
+  <!-- ========================= -->
+  <!-- 📂 SIDEBAR DEGRADADO      -->
+  <!-- ========================= -->
+  <aside class="sidebar" role="navigation" aria-label="Menú principal">
+    <!-- 🔹 TODO lo que debe scrollear (encabezado, búsqueda, menú) -->
+    <div class="side-content">
+      <!-- 👤 Encabezado -->
+      <!-- =========================================
+      HEADER DEL SIDEBAR — SOLO ESTA PARTE ES REACTIVA
+      ========================================= -->
+      <div class="side-header">
+        <div class="avatar">
+          <img
+            [src]="avatarUrl() || 'assets/img/person.png'"
+            alt="Foto de perfil"
+            loading="lazy"
+            (error)="onAvatarError()"
+          />
+        </div>
+        <div class="user">
+          <div class="font-semibold">{{ username() }}</div>
+          <div class="text-xs opacity-80">{{ perfil() }}</div>
+
+        <div class="profile-actions">
+          <!-- 🔗 Botón solo con ícono (editar perfil) -->
+          <p-button 
+            icon="pi pi-user-edit" 
+            styleClass="square-btn p-button-sm p-button-secondary mr-2"
+            [routerLink]="['/perfil/editar']"
+            pTooltip="Editar perfil"
+            tooltipPosition="top">
+          </p-button>
+
+          <!-- 🔗 Botón solo con ícono (cambiar contraseña) -->
+          <p-button 
+            icon="pi pi-key" 
+            styleClass="square-btn p-button-sm p-button-secondary"
+            [routerLink]="['/perfil/password']"
+            pTooltip="Cambiar contraseña"
+            tooltipPosition="top">
+          </p-button>
+        </div>
+        </div>
+      </div>   
+      <!-- ========================================= -->
+      <!--          🔎 BÚSQUEDA EN MENÚ               -->
+      <!-- ========================================= -->
+      <div class="search">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input
+          type="search"
+          [formControl]="search"
+          placeholder="Buscar..."
+          aria-label="Buscar en el menú">
+      </div>
+      <!-- ========================================= -->
+      <!--   📂 MENÚ DINÁMICO (roles + busqueda)      -->
+      <!-- ========================================= -->
+      <nav class="menu" role="tree">
+        <ng-container *ngFor="let m of menu()">
+          <!-- Nodo con hijos -->
+          <div
+            *ngIf="m.children?.length"
+            class="node"
+            role="treeitem"
+            [attr.aria-expanded]="expanded().has(m.id)">
+            <button type="button" class="item parent" (click)="toggle(m.id)">
+              <i *ngIf="m.icon" [class]="m.icon + ' icon'"></i>
+              <span class="label">{{ m.label }}</span>
+              <span class="spacer"></span>
+              <span class="caret" [class.up]="expanded().has(m.id)">▾</span>
+              <span *ngIf="m.badge" class="badge">{{ m.badge }}</span>
+            </button>
+
+            <!-- Hijos -->
+            <div class="children" [class.open]="expanded().has(m.id)">
+              <a
+                *ngFor="let c of m.children"
+                class="item child"
+                [routerLink]="c.route"
+                routerLinkActive="active"
+                role="treeitem">
+                <i *ngIf="c.icon" [class]="c.icon + ' icon'"></i>
+                <span class="label">{{ c.label }}</span>
+                <span class="spacer"></span>
+                <span *ngIf="c.badge" class="badge" [class.isNew]="c.badge === 'NEW'">{{ c.badge }}</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hoja simple -->
+          <a
+            *ngIf="!m.children?.length"
+            class="item leaf"
+            [routerLink]="m.route"
+            routerLinkActive="active"
+            role="treeitem">
+            <i *ngIf="m.icon" [class]="m.icon + ' icon'"></i>
+            <span class="label">{{ m.label }}</span>
+            <span class="spacer"></span>
+            <span *ngIf="m.badge" class="badge" [class.isNew]="m.badge === 'NEW'">{{ m.badge }}</span>
+          </a>
+        </ng-container>
+      </nav>
+    </div>
+    <!-- ========================================= -->
+    <!--         🔻 FOOTER FIJO (no scrollea)       -->
+    <!-- ========================================= -->
+    <footer class="side-footer" role="contentinfo" aria-label="Identidad institucional">
+      <!-- coloca tu archivo en: src/assets/img/pj-logo-blanco.svg (o .png) -->
+      <img src="assets/img/pj-logo-footer.png" alt="Poder Judicial del Perú">
+      <!-- (Opcional) <small class="foot-note">Sicdpre · v1.0</small> -->
+    </footer>
+  </aside> <!-- 👈 CERRAR ASIDE ANTES DE MAIN -->
+
+  <!-- ========================= -->
+  <!-- 📑 CONTENIDO DINÁMICO     -->
+  <!-- ========================= -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+

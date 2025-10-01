@@ -1,0 +1,25 @@
+:host { display: block; }
+.text-right { text-align: right; }
+.w-full { width: 100%; }
+
+/* 🎨 Header de la tabla usando TOKENS del layout */
+/* gradiente continuo en TODO el header */
+:host ::ng-deep .bandeja-table .p-datatable-thead {
+  background: linear-gradient(90deg, var(--pj-rojo), var(--pj-rojo-osc));
+}
+
+/* los <th> NO pintan fondo; solo tipografía y borde inferior */
+:host ::ng-deep .bandeja-table .p-datatable-thead > tr > th {
+  background: transparent !important;
+  color: var(--pj-text);
+  font-weight: 600;
+  border-bottom: 2px solid var(--neutral-100);
+  /* quita separadores verticales que “cortan” el gradiente */
+  border-right-color: transparent;
+  box-shadow: none;
+}
+
+/* Esquinas redondeadas (opcional) */
+:host ::ng-deep .bandeja-table .p-datatable-thead > tr > th:first-child { border-top-left-radius: 8px; }
+:host ::ng-deep .bandeja-table .p-datatable-thead > tr > th:last-child  { border-top-right-radius: 8px; }
+
