@@ -1,26 +1,49 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, Request
 from app.infrastructure.db.cls_bd_usuario import PgRepoUsuario
+from app.interfaces.request.update_profile_request import UpdateProfileRequest
+from app.interfaces.request.change_password_request import ChangePasswordRequest
+from app.core.security import get_current_user  # ⚡ tu función de auth con JWT
 
-router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
+router = APIRouter(prefix="/usuarios", tags=["usuarios"])
 
-class UsuarioUpdate(BaseModel):
-    x_nombre: str | None = None
-    x_email: str | None = None
-    c_distrito: int | None = None
+# ✅ Perfil autenticado
 
-@router.get("/{codigo}")
-async def obtener_usuario(codigo: int, repo: PgRepoUsuario = Depends(PgRepoUsuario.dep)):
-    print(f"📡 Endpoint /usuarios/{codigo} invocado")  # LOG DEBUG
-    usuario = await repo.obtener_usuario(codigo)
+
+@router.get("/me")
+async def obtener_mi_perfil(
+    current_user: dict = Depends(get_current_user),
+    repo: PgRepoUsuario = Depends(PgRepoUsuario.dep)
+):
+    return await repo.obtener_usuario_por_username(current_user["sub"])
+
+# ✏️ Actualizar perfil
+
+
+@router.put("/me")
+async def actualizar_mi_perfil(
+    dto: UpdateProfileRequest,
+    current_user: dict = Depends(get_current_user),
+    repo: PgRepoUsuario = Depends(PgRepoUsuario.dep)
+):
+    print("📥 Datos recibidos del frontend:",
+          dto.dict())  # <-- Aquí ves qué llega
+    print("Usuario autenticado:", current_user["sub"])
+
+    usuario = await repo.actualizar_mi_usuario(current_user["sub"], dto.fullName, dto.email)
     if not usuario:
-        print("⚠️ Usuario no encontrado en DB")  # LOG DEBUG
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        return {"detail": "No se pudo actualizar el perfil"}
     return usuario
 
-@router.put("/{codigo}")
-async def actualizar_usuario(codigo: int, data: UsuarioUpdate, repo: PgRepoUsuario = Depends(PgRepoUsuario.dep)):
-    usuario = await repo.actualizar_usuario(codigo, data.dict(exclude_unset=True))
+# 🔑 Cambiar contraseña
+
+
+@router.post("/change-password")
+async def cambiar_password(
+    dto: ChangePasswordRequest,
+    current_user: dict = Depends(get_current_user),
+    repo: PgRepoUsuario = Depends(PgRepoUsuario.dep)
+):
+    usuario = await repo.cambiar_password(current_user["sub"], dto.oldPassword, dto.newPassword)
     if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return usuario
+        return {"detail": "Contraseña incorrecta"}
+    return {"message": "Contraseña actualizada con éxito"}

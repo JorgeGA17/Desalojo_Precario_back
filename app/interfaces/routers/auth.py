@@ -6,7 +6,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from app.core.security import create_jwt
+from app.core.jwt_utils import create_jwt
 from app.infrastructure.security.cls_autenticacion import AutenticacionPg
 
 # ------------------------------------------------------------
